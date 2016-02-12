@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import uk.ac.ox.ibme.androidstepcounter.uk.ac.ox.ibme.androidstepcounter.algos.FilteredThresholdStepCounter;
+
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager sensorManager;
@@ -20,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView text;
     private boolean measuring = false;
     private Sensor accelerometer;
-    private IStepCounter stepcounter = new DummyStepCounter();
+    private IStepCounter stepcounter = new FilteredThresholdStepCounter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

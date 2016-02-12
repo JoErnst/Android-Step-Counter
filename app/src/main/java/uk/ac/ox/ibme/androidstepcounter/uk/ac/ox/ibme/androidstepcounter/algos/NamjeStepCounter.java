@@ -1,7 +1,9 @@
-package uk.ac.ox.ibme.androidstepcounter;
+package uk.ac.ox.ibme.androidstepcounter.uk.ac.ox.ibme.androidstepcounter.algos;
 
 import java.util.ArrayList;
 import java.util.Queue;
+
+import uk.ac.ox.ibme.androidstepcounter.IStepCounter;
 
 /**
  * Created by engs1397 on 21/01/2016.
