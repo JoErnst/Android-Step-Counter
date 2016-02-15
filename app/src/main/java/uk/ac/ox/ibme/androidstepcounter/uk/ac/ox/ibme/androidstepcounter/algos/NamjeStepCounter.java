@@ -33,37 +33,38 @@ public class ThresholdStepCounter implements IStepCounter {
     
     @Override
     public int getSteps(long timestamp, float accx, float accy, float accz) {
-        double vec_mag = Math.sqrt(Math.pow(accx, 2)+Math.pow(accy, 2)+Math.pow(accz, 2));
-        float thresh = alpha/clock + beta;
+    double vec_mag = Math.sqrt(Math.pow(accx, 2)+Math.pow(accy, 2)+Math.pow(accz, 2));
+    float thresh = alpha/clock + beta;
     
     // This loops checks whether there has been step like behavior, and if so, whether the
     // step duration is within the 'normal' step limits defined above
-        if ((max_val - vec_mag) >= thresh){
-            step ++;
-            if (step_dur > step_max){
-                step = step-1;
-                step_dur = 0;
-            }else if (step_dur < step_min){
-                step = step-1;
-            }else{
-                clock = 1;
-                max_val = vec_mag;
-            }else if (vec_mag > max_val){
-                max_val = vec_mag;
-            }
+    if ((max_val - vec_mag) >= thresh){
+        step ++;
+        if (step_dur > step_max){
+            step = step-1;
+            step_dur = 0;
+        }else if (step_dur < step_min){
+            step = step-1;
+        }else{
+            clock = 1;
+            max_val = vec_mag;
+        }else if (vec_mag > max_val){
+            max_val = vec_mag;
         }
-    
-        step_dur ++;
-        clock ++;
-        
-        return step;
     }
     
-    @Override
-    public void reset() {
-        private int clock = 1;
-        private int step = 0;
-        private double max_val = 0;
-        private double step_dur = 0;
-    }
+    step_dur ++;
+    clock ++;
+    
+    return step;
 }
+
+@Override
+public void reset() {
+private int clock = 1;
+private int step = 0;
+private double max_val = 0;
+private double step_dur = 0;
+}
+}
+
