@@ -1,4 +1,4 @@
-package uk.ac.ox.ibme.androidstepcounter.uk.ac.ox.ibme.androidstepcounter.algos;
+package uk.ac.ox.ibme.androidstepcounter.algos;
 
 import uk.ac.ox.ibme.androidstepcounter.IStepCounter;
 

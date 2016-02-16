@@ -5,15 +5,24 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
-import uk.ac.ox.ibme.androidstepcounter.uk.ac.ox.ibme.androidstepcounter.algos.FilteredThresholdStepCounter;
+import uk.ac.ox.ibme.androidstepcounter.algos.NamjeStepCounter;
+import uk.ac.ox.ibme.androidstepcounter.algos.NamjeStepCounterWalk;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -22,7 +31,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private TextView text;
     private boolean measuring = false;
     private Sensor accelerometer;
-    private IStepCounter stepcounter = new FilteredThresholdStepCounter();
+    BufferedWriter sensorlog;
+    BufferedWriter algolog;
+    private IStepCounter stepcounter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,9 +54,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     stopListener();
                     text.setText("stopped");
                     button.setText("Start");
+
+                    try {
+                        sensorlog.flush();
+                        algolog.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
+
+        File root = Environment.getExternalStorageDirectory();
+        try {
+            File f = new File(root, "sensorlog.csv");
+            f.createNewFile();
+            sensorlog = new BufferedWriter(new FileWriter(f));
+            f = new File(root, "algolog.csv");
+            f.createNewFile();
+            algolog = new BufferedWriter(new FileWriter(f));
+
+            stepcounter = new NamjeStepCounter(algolog);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void startListener(){
@@ -81,11 +113,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if(!measuring) measuring = true;
 
         int steps = stepcounter.getSteps(event.timestamp, event.values[0], event.values[1], event.values[2]);
-        text.setText(""+steps);
+        String line = System.currentTimeMillis()+ ", " + event.values[0]+ ", " + event.values[1] + ", " + event.values[2] + "\n";
+        try {
+            sensorlog.write(line);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        text.setText("" + steps);
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+
+        try {
+            sensorlog.flush();
+            algolog.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
