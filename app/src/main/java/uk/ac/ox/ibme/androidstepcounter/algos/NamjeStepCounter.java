@@ -49,21 +49,22 @@ public class NamjeStepCounter implements IStepCounter {
         // This loops checks whether there has been step like behavior, and if so, whether the
         // step duration is within the 'normal' step limits defined above
         if ((max_val - vec_mag) >= thresh){
-            step ++;
+
             if (step_dur > step_max){
-                step = step-1;
                 step_dur = 0;
-            }else if (step_dur < step_min){
-                step = step-1;
-            }else{
+            } else if (step_dur >= step_min){
+                step ++;
                 clock = 1;
                 max_val = vec_mag;
             }
-        } else if (vec_mag > max_val){
+        }
+
+        if (vec_mag > max_val){
             max_val = vec_mag;
         }
+
         try {
-            log.write(System.currentTimeMillis() + ", STEP DETECTED" + "\n");
+            log.write(System.currentTimeMillis() + ", " + max_val + ", " + step + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
